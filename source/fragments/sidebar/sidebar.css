@@ -1,0 +1,52 @@
+.sidebar {
+    width: 100%;
+    height: 0;
+    position: fixed;
+    top: 0;
+    left: 0;
+    background-color: #090f1e85;
+    z-index: 20;
+    overflow: hidden hidden;
+    transition: 0.3s ease-in-out;
+    box-sizing: border-box;
+    opacity: 0;
+}
+
+.side-logo {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 16px;
+}
+
+.side-menu {
+    margin-top: 50px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    align-items: center;
+}
+
+.sidelink {
+    text-decoration: none;
+    font-family: var(--poppins);
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 9;
+}
+
+.sidebar.show {
+    height: 100%;
+    padding: 20px 50px;
+    opacity: 1;
+}
+
+.homepage.blur, .page.blur {
+    filter: blur(10px);
+}
+
+@media (max-width : 470px) {
+    .sidebar.show { padding: 20px; }
+}
