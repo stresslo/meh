@@ -22,6 +22,7 @@ const Mehpop = () => {
     const [ wallet, setWallet ] = useState('')
     const [ validWallet, setValidWallet ] = useState(localStorage.getItem('wallet') || '')
     
+    const [ update, setUpdate ] = useState(false)
     const [ clicked, setClicked ] = useState(false)
     const [ lastTime, setLastTime ] = useState(parseInt(localStorage.getItem('clvlsTm')) || 0)
     const [ lastPoints, setLastPoints ] = useState(parseInt(localStorage.getItem('clvlsPnt')) || 0)
@@ -44,12 +45,12 @@ const Mehpop = () => {
             if (currentPoints && validWallet) {
                 // const greater = currentPoints >= lastPoints
                 const updated = currentPoints - lastPoints
-                await axios.patch(endpoint, { wallet: validWallet, point: updated })
+                const response = await axios.patch(endpoint, { wallet: validWallet, point: updated })
                 setLastTime(new Date().getTime())
                 setLastPoints(currentPoints >= lastPoints ? currentPoints : lastPoints)
                 localStorage.setItem('clvlsTm', new Date().getTime())
+                setUpdate(true)
                 // setFixPoints(currentPoints)
-                // setFixPoints(currentPoints >= fixPoints ? currentPoints : fixPoints)
                 // localStorage.setItem('clvrsrlibp', `clv ${greater ? updated : 0} ${new Date().getTimezoneOffset().toString().split('').join('')}`)
                 // setPoints(`clv ${updated} ${new Date().getTimezoneOffset().toString().split('').join('')}`)
                 // localStorage.setItem('clvlsPnt', currentPoints >= lastPoints ? currentPoints : lastPoints)
@@ -101,8 +102,8 @@ const Mehpop = () => {
     
     window.onbeforeunload = () => { sendPoints() }
     
-    useEffect(() => { getData() }, [fixPoints])
-    useEffect(() => { sendPoints(); setInterval(() => { setClicked(false) }, 300) }, [])
+    useEffect(() => { update && getData(); setUpdate(false) }, [update])
+    useEffect(() => { getData(); sendPoints(); setInterval(() => { setClicked(false) }, 300) }, [])
 
     // useEffect(() => { localStorage.setItem('clvrsrlibp', points)}, [points])
     // useEffect(() => { localStorage.setItem('clvfxPnt', fixPoints)}, [fixPoints])
@@ -188,7 +189,7 @@ const Mehpop = () => {
         }
     
         return ( 
-            <p style={{fontFamily: 'var(--dmsans)', textAlign: 'center', fontSize: '1rem', display: 'none'}}>Remaining time : {formatTime(timeLeft)}</p>
+            <p style={{fontFamily: 'var(--dmsans)', textAlign: 'center', fontSize: '1rem'}}>Remaining time : {formatTime(timeLeft)}</p>
         );
     }
 
