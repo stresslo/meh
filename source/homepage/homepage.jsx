@@ -150,7 +150,22 @@ const Homepage = () => {
                     <h3>Born and raised in the Radix Community, Meh Guy embodies simplicity, authenticity, and contentment. He believes that crypto doesn't have to be complicated or overwhelming; it can be as sample as Enjoying a Meh moment with friends.</h3>
                     <h3>Driven by his passion for spreading positifity and embracing Meh, Meh Guy has become a beloved figure in the Radix Community. With his laid-back attitude and witty sense of humor, he's captured the hearts of Mehsters everywhere.</h3>
                 </div>
-                <div className="global-card" style={{marginTop: '100px', flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
+                <div className="global-card" style={windowWidth <= 660 ? {marginTop: '40px', padding: '50px 0', display: 'flex', alignItems: 'center', flexDirection: 'column'} : {marginTop: '40px', padding: '50px 0', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+                    <img src="/assets/Meteor BG - Desktop.png" alt="" style={{width: '100%',height: '100%',position: 'absolute', objectFit: 'cover'}}/>
+                    <div style={windowWidth <= 660 ? {textAlign: 'center', width: '100%', display: 'flex', flexDirection: 'column', gap: '30px'} : {width: '50%', display: 'flex', flexDirection: 'column', gap: '30px', paddingLeft: '50px', boxSizing: 'border-box'}}>
+                        <h1 className="gradient1">MEH Bot Tracker</h1>
+                        <h3 style={{color: '#ccc'}}>Track Everything in Radix Ecosystem with MEH Bot Tracker, and become MEH.</h3>
+                        <div onClick={(() => location.href = 'https://t.me/mehtracker_bot')} style={windowWidth <= 660 ? {width: '50%', margin: 'auto'} : {  }} className="button-border">Access MEH BOT</div>
+                    </div>
+                    <div style={windowWidth <= 660 ? {width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative'} : {width: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center', position: 'relative'}}>
+                        {windowWidth <= 660 ? 
+                            <img src="/assets/variasi/Meh3.png" style={{width: '70%', objectFit: 'cover', marginTop: '30px'}} alt="" />
+                        : 
+                            <img src="/assets/variasi/Meh3.png" style={{width: '70%', objectFit: 'cover', transform: 'rotateY(180deg)'}} alt="" />
+                        }
+                    </div>
+                </div>
+                <div className="global-card" style={{ flexDirection: 'column', justifyContent: 'center', alignItems: 'center'}}>
                     <img src="/assets/Meteor BG - Desktop.png" alt="" style={{width: '100%',height: '100%',position: 'absolute', objectFit: 'cover'}}/>
                     {(windowWidth <= 470) && <img src="/assets/Gradient 1.png" alt="" style={{width: '100%',height: '100%',position: 'absolute', objectFit: 'cover', scale: '2'}}/>}
                     <div style={{padding: '0 20px'}}>
@@ -163,8 +178,8 @@ const Homepage = () => {
                         <div className="line" style={{margin: '70px 0'}}/>
                         <h1 className="gradient1" style={{textAlign: 'center'}}>Partnerships connected with us</h1>
                         <div style={{display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', gap: '30px', marginTop: '20px'}}>
-                            <img width={60} src="/assets/Logo Fiatfighters.png" alt="" />
-                            <img width={50} src="/assets/Logo Radketshop.png" alt="" />
+                            {/* <img width={60} src="/assets/Logo Fiatfighters.png" alt="" /> */}
+                            <img style={{cursor: 'pointer', zIndex: 10}} onClick={() => location.href = 'https://radket.shop'} width={50} src="/assets/Logo Radketshop.png" alt="" />
                         </div>
                     </div>
                 </div>
