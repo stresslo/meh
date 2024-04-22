@@ -16,7 +16,7 @@ const Mehpop = () => {
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
     window.onresize = () => setWindowWidth(window.innerWidth);
 
-    const audio = useRef(null)
+    const audio = useRef(new Audio())
     const [ data, setData ] = useState([])
     const [ time, setTime ] = useState(0)
     const [ name, setName ] = useState('')
@@ -98,7 +98,7 @@ const Mehpop = () => {
         // const audio = new Audio('/assets/ba.mp3');
         // audio.src = '/assets/ba.mp3'
         // audio.load()
-        audio.current.play()
+        // audio.current.play()
     }
     
     const handleInput = async () => {
@@ -131,16 +131,14 @@ const Mehpop = () => {
     // useEffect(() => { localStorage.setItem('clvfxPnt', fixPoints)}, [fixPoints])
 
     
-    // useEffect(() => {
-    //     // audio.current.src = '/assets/ba.mp3'
-    //     audio.current.load()
-    //     if (soundOn) { 
-    //         // audio.src = '/assets/ba.mp3'
-    //         // audio.load()
-    //         // audio.current.play().then(() => setSoundOn(false))
-    //         // setSoundOn(false)
-    //     }
-    // }, [soundOn])
+    useEffect(() => {
+        if (clicked) { 
+            audio.current.src = '/assets/ba.mp3'
+            audio.current.load()
+            audio.current.play()
+            // setSoundOn(false)
+        }
+    }, [clicked])
 
     // useEffect(() => { 
     //     const currentTime = new Date().getTime();
