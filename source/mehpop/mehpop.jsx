@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import Navbar from "../fragments/navbar/navbar"
 import Sidebar from "../fragments/sidebar/sidebar"
-import sampleData from "../../utils/sampleData"
 import slicedText from "../../utils/slicedText";
 import { useNavigate } from "react-router-dom";
 import swalert from "../../utils/swalert"
@@ -16,6 +15,7 @@ const Mehpop = () => {
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
     window.onresize = () => setWindowWidth(window.innerWidth);
 
+    const audio = new Audio()
     const [ data, setData ] = useState([])
     const [ time, setTime ] = useState(0)
     const [ name, setName ] = useState('')
@@ -57,7 +57,7 @@ const Mehpop = () => {
                 // localStorage.setItem('clvfxPnt', currentPoints >= fixPoints ? currentPoints : fixPoints)
                 // console.log(response)
             } else {
-                setLastTime(new Date().getTime())
+                validWallet ? setLastTime(new Date().getTime()) : setLastTime(0)
             }
         } catch (error) {
             if (error) return false;
@@ -85,8 +85,13 @@ const Mehpop = () => {
     const pushClick = () => {
         setCurrentPoints(currentPoints + 1);
         setClicked(true)
-        const audio = new Audio('/assets/ba.mp3');
-        audio.play();
+        
+        // const audio = document.getElementById('audio')
+        // console.log(audio.currentTime)
+        // const audio = new Audio('/assets/ba.mp3');
+        // audio.src = '/assets/ba.mp3'
+        // audio.load()
+        // audio.play()
     }
     
     const handleInput = async () => {
@@ -104,15 +109,24 @@ const Mehpop = () => {
         }
     }
     
-    window.onbeforeunload = () => { sendPoints() }
+    // window.onbeforeunload = () => { sendPoints() }
     
-    useEffect(() => { update && getData(); setUpdate(false) }, [update])
+    useEffect(() => { update && getData(); setUpdate(false); }, [update])
     useEffect(() => { getData(); sendPoints(); setInterval(() => { setClicked(false) }, 300) }, [])
+
+    useEffect(() => { localStorage.setItem('clvlsPnt', lastPoints) }, [lastPoints])
+    useEffect(() => { localStorage.setItem('clvcrnPnt', currentPoints);}, [currentPoints])
 
     // useEffect(() => { localStorage.setItem('clvrsrlibp', points)}, [points])
     // useEffect(() => { localStorage.setItem('clvfxPnt', fixPoints)}, [fixPoints])
-    useEffect(() => { localStorage.setItem('clvlsPnt', lastPoints) }, [lastPoints])
-    useEffect(() => { localStorage.setItem('clvcrnPnt', currentPoints);}, [currentPoints])
+
+    useEffect(() => {
+        if (clicked) { 
+            audio.src = '/assets/ba.mp3'
+            audio.load()
+            audio.play()
+        }
+    }, [clicked])
 
     // useEffect(() => { 
     //     const currentTime = new Date().getTime();
@@ -200,6 +214,7 @@ const Mehpop = () => {
     return (
         <>
         <Sidebar/>
+        <audio style={{display: 'none'}} preload="metadata" id="audio"><source src="/assets/ba.mp3" type="audio/mpeg"/></audio>
         <div className="page" style={{paddingBottom: '0'}}>
             <div className="var-background">
                 <img className="blur1" src="/assets/Gradient 1.png" alt="blur" />
@@ -214,7 +229,7 @@ const Mehpop = () => {
                             {validWallet  && <input className="meh-input-name" type="text" value={validWallet} readOnly/>}
                             {/* {validWallet && <div className="fa-solid fa-circle-xmark fa-md" style={{translate : '-5px 0'}}></div>} */}
                             {!validWallet && <input ref={inputref} className="meh-input-name" type="text" value={wallet} onChange={(e) => setWallet(e.target.value)} placeholder="Input Wallet"/>}
-                            {!validWallet && <img src="/assets/play-circle.png" style={{position: 'absolute', right: '0', bottom: '10px', cursor: 'pointer'}} alt="" />}
+                            {!validWallet && <img src="/assets/play-circle.png" onClick={() => handleInput()} style={{position: 'absolute', right: '0', bottom: '10px', cursor: 'pointer'}} alt="" />}
                         </form>
                         {validWallet ? 
                         // <form onSubmit={(e) => {e.preventDefault(); handleInput()}} style={{marginLeft: '10px', textAlign: 'left', position: 'relative'}}>
