@@ -2,13 +2,17 @@ import { useEffect, useRef, useState } from "react";
 import Navbar from "../fragments/navbar/navbar"
 import Sidebar from "../fragments/sidebar/sidebar"
 import sampleData from "../../utils/sampleData"
+import slicedText from "../../utils/slicedText";
+import { useNavigate } from "react-router-dom";
 import swalert from "../../utils/swalert"
 import axios from "axios";
 import "./mehpop.css"
 
 const Mehpop = () => {
 
+    const navigate = useNavigate()
     const inputref = useRef(null)
+    const endpoint = "https://api.mehguy.click/api/v1/users"
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
     window.onresize = () => setWindowWidth(window.innerWidth);
 
@@ -19,51 +23,60 @@ const Mehpop = () => {
     const [ validWallet, setValidWallet ] = useState(localStorage.getItem('wallet') || '')
     
     const [ clicked, setClicked ] = useState(false)
-    const [ lastTime, setLastTime ] = useState(localStorage.getItem('lastTime') || null)
-    const [ lastPoints, setLastPoints ] = useState(localStorage.getItem('lastPoints') || 0)
-    const [ currentPoints, setCurrentPoints ] = useState(localStorage.getItem('currentPoints') || 0)
+    const [ lastTime, setLastTime ] = useState(parseInt(localStorage.getItem('clvlsTm')) || 0)
+    const [ lastPoints, setLastPoints ] = useState(parseInt(localStorage.getItem('clvlsPnt')) || 0)
+    const [ currentPoints, setCurrentPoints ] = useState(parseInt(localStorage.getItem('clvcrnPnt')) || 0)
 
-    const updatePoints = async () => {
-        try {
-            const response = await axios.patch("https://api.mehguy.click/api/v1/users")
-        } catch (error) {
-            if (error && error.response) return false;
-        }
-    }
+    const [ points, setPoints ] = useState(localStorage.getItem('clvrsrlibp') || 0)
+    const [ fixPoints, setFixPoints] = useState(parseInt(localStorage.getItem('clvfxPnt')) || 0)
 
     const getData = async () => {
         try {
-            const response = await axios.get("https://api.mehguy.click/api/v1/users")
+            const response = await axios.get(endpoint)
             setData(response.data.users)
         } catch (error) {
-            return false
+            return false;
         }
     }
 
+    const handleSend = async () => {
+        try {
+            if (currentPoints && validWallet) {
+                // const greater = currentPoints >= lastPoints
+                const updated = currentPoints - lastPoints
+                await axios.patch(endpoint, { wallet: validWallet, point: updated })
+                setLastTime(new Date().getTime())
+                setLastPoints(currentPoints >= lastPoints ? currentPoints : lastPoints)
+                localStorage.setItem('clvlsTm', new Date().getTime())
+                // setFixPoints(currentPoints)
+                // setFixPoints(currentPoints >= fixPoints ? currentPoints : fixPoints)
+                // localStorage.setItem('clvrsrlibp', `clv ${greater ? updated : 0} ${new Date().getTimezoneOffset().toString().split('').join('')}`)
+                // setPoints(`clv ${updated} ${new Date().getTimezoneOffset().toString().split('').join('')}`)
+                // localStorage.setItem('clvlsPnt', currentPoints >= lastPoints ? currentPoints : lastPoints)
+                // localStorage.setItem('clvfxPnt', currentPoints >= fixPoints ? currentPoints : fixPoints)
+                // console.log(response)
+            }
+        } catch (error) {
+            if (error) return false;
+        }
+    }
+    
     const sendPoints = async () => {
         if (lastTime) {
-            const currentTime = new Date();
+            const currentTime = new Date().getTime();
             const elapsedTime = currentTime - lastTime;
-            const remainingTime = 3600000 - elapsedTime;
-            if (remainingTime <= 0) {
-                // kirim points ke backend
-                handlePoints();
-            } else {
-                setTimeout(() => {
-                    // kirim points ke backend
-                    handlePoints()
-                }, remainingTime)
-            }
-        } else {
-            // kirim points ke backend
-            handlePoints()
+            const remainingTime = 1000 * 15 - elapsedTime;
+            if (remainingTime <= 0) return handleSend()
+            // else {
+            //     setTimeout(() => {
+            //         // kirim points ke backend
+            //         handleSend()
+            //     }, remainingTime)
+            // }
+        } 
+        else {
+            handleSend()
         }
-    }
-
-
-    const handlePoints = () => {
-        localStorage.setItem('lastTime', new Date())
-        localStorage.setItem('lastPoints', currentPoints)
     }
     
     const pushClick = () => {
@@ -72,14 +85,36 @@ const Mehpop = () => {
     }
     
     const handleInput = async () => {
-        if (wallet.length <= 3) return false;
-        setValidWallet(wallet)
-        localStorage.setItem("wallet", wallet)
+        if (wallet.length <= 2) return false;
+        try {
+            await axios.post(endpoint, { wallet: wallet, point: 0})
+            setValidWallet(wallet)
+            setLastTime(new Date().getTime())
+            localStorage.setItem("wallet", wallet)
+            localStorage.setItem('clvlsTm', new Date().getTime())
+        } catch (error) {
+            if (error || error.response) {
+                return false;
+            }
+        }
     }
     
+    window.onbeforeunload = () => { sendPoints() }
     
-    useEffect(() => { setInterval(() => { setClicked(false) }, 500) }, [])
-    useEffect(() => { localStorage.setItem('currentPoints', currentPoints); getData(); }, [currentPoints])
+    useEffect(() => { getData() }, [fixPoints])
+    useEffect(() => { sendPoints(); setInterval(() => { setClicked(false) }, 300) }, [])
+
+    // useEffect(() => { localStorage.setItem('clvrsrlibp', points)}, [points])
+    // useEffect(() => { localStorage.setItem('clvfxPnt', fixPoints)}, [fixPoints])
+    useEffect(() => { localStorage.setItem('clvlsPnt', lastPoints) }, [lastPoints])
+    useEffect(() => { localStorage.setItem('clvcrnPnt', currentPoints);}, [currentPoints])
+
+    // useEffect(() => { 
+    //     const currentTime = new Date().getTime();
+    //     const elapsedTime = currentTime - lastTime;
+    //     const remainingTime = 10000 - elapsedTime;
+    //     setTimeout(() => { sendPoints() }, remainingTime)
+    //  }, [lastTime])
     
     // useEffect(() => { !name && setCurrentPoints(0) }, [name])
     // useEffect(() => {
@@ -116,6 +151,47 @@ const Mehpop = () => {
         page.classList.contains('blur') ? page.classList.remove('blur') : page.classList.add('blur')
     }
 
+
+    // -------- REMAINING TIME --------
+
+    const Remaining = ({ startTime }) => {
+        const [timeLeft, setTimeLeft] = useState(startTime);
+
+        useEffect(() => {
+            if (startTime) {
+                const elapsedTime = new Date().getTime() - startTime;
+                setTimeLeft(Math.max(15 * 1000 - elapsedTime, 0)); // Menghitung waktu sisa 15 detik
+            }
+        }, [startTime]);
+    
+        useEffect(() => {
+            const timer = setInterval(() => {
+                setTimeLeft(prevTimeLeft => Math.max(prevTimeLeft - 1000, 0)); // Mengurangi waktu sisa setiap detik
+            }, 1000);
+    
+            return () => clearInterval(timer); // Membersihkan interval saat komponen unmount
+        }, []);
+    
+        useEffect(() => {
+            if (timeLeft === 0) {
+                // Ketika waktu habis, lakukan apa yang diperlukan di sini
+                sendPoints()
+            }
+        }, [timeLeft]);
+    
+        const formatTime = (timeInMilliseconds) => {
+            const totalSeconds = Math.ceil(timeInMilliseconds / 1000);
+            const hours = Math.floor(totalSeconds / 3600);
+            const minutes = Math.floor((totalSeconds % 3600) / 60);
+            const seconds = totalSeconds % 60;
+            return `${hours < 10 ? '0' : ''}${hours}:${minutes < 10 ? '0' : ''}${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        }
+    
+        return ( 
+            <p style={{fontFamily: 'var(--dmsans)', textAlign: 'center', fontSize: '1rem', display: 'none'}}>Remaining time : {formatTime(timeLeft)}</p>
+        );
+    }
+
     return (
         <>
         <Sidebar/>
@@ -130,13 +206,23 @@ const Mehpop = () => {
                     <div className="meh-user">
                         <form onSubmit={(e) => {e.preventDefault(); handleInput()}} style={{marginLeft: '10px', textAlign: 'left', position: 'relative'}}>
                             <div className="text3" style={{fontSize: '0.8rem', color: '#aaa'}}>{validWallet ? "Your Wallet : " : "Wallet"}</div>
-                            {validWallet  && <input ref={inputref} className="meh-input-name" type="text" value={validWallet} readOnly/>}
+                            {validWallet  && <input className="meh-input-name" type="text" value={validWallet} readOnly/>}
+                            {/* {validWallet && <div className="fa-solid fa-circle-xmark fa-md" style={{translate : '-5px 0'}}></div>} */}
                             {!validWallet && <input ref={inputref} className="meh-input-name" type="text" value={wallet} onChange={(e) => setWallet(e.target.value)} placeholder="Input Wallet"/>}
                             {!validWallet && <img src="/assets/play-circle.png" style={{position: 'absolute', right: '0', bottom: '10px', cursor: 'pointer'}} alt="" />}
                         </form>
+                        {validWallet ? 
+                        // <form onSubmit={(e) => {e.preventDefault(); handleInput()}} style={{marginLeft: '10px', textAlign: 'left', position: 'relative'}}>
+                        //     <div className="text3" style={{fontSize: '0.8rem', color: '#aaa'}}>Points :</div>
+                        //     <input className="meh-input-name" type="text" value={points ? points.split(' ')[1] : '0'} readOnly/>
+                        // </form>
+                        // <Remaining startTime={lastTime}/>
+                        <></>
+                        :
                         <div onClick={() => inputref.current.focus()} className="button-border">
                             {windowWidth <= 560 ? <img src="/assets/wallet-01.png"/> : 'CONNECT WALLET'}
                         </div>
+                        }
                     </div>
                     <div style={{textAlign: 'center'}}>
                         <div className="text1">Your Score {name ? `: ${name}` : ''}</div>
@@ -149,6 +235,7 @@ const Mehpop = () => {
                         />
                         <div className="button-gradient" onClick={() => pushClick()} style={validWallet ? {width: '120px', height: '45px', zIndex: '10', margin: 'auto', marginTop: '30px'} : { display: 'none' }}>POP MEH!</div>
                     </div>
+                    {lastTime ? <Remaining startTime={lastTime}/> : <></>}
                     <div onClick={() => windowWidth <= 470 ? handleBoardMobile() : handleBoard()} id="leaderboard" className="leaderboard">
                         <div style={{display: 'flex', justifyContent: 'space-between', gap: '10px', alignItems: 'center'}}>
                             <div style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
@@ -171,7 +258,7 @@ const Mehpop = () => {
                                         <div style={{display: 'flex', gap: '15px', alignItems: 'center'}}>
                                             <div className="top-box-circle">{key + 1}</div>
                                             <div className="top-box-user">
-                                                <p>{data.wallet}</p>
+                                                <p>{slicedText(data.id)}</p>
                                                 <p>{data.point}</p>
                                             </div>
                                         </div>
@@ -207,7 +294,7 @@ const Mehpop = () => {
                                 <div style={{display: 'flex', gap: '15px', alignItems: 'center'}}>
                                     <div className="top-box-circle">{key + 1}</div>
                                     <div className="top-box-user">
-                                        <p>{data.wallet}</p>
+                                        <p>{slicedText(data.id)}</p>
                                         <p>{data.point}</p>
                                     </div>
                                 </div>
