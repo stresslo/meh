@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import Navbar from "../fragments/navbar/navbar"
 import Sidebar from "../fragments/sidebar/sidebar"
 import slicedText from "../../utils/slicedText";
+import { ScaleLoader } from "react-spinners";
 import { useNavigate } from "react-router-dom";
 import swalert from "../../utils/swalert"
 import axios from "axios";
@@ -15,13 +16,15 @@ const Mehpop = () => {
     const [windowWidth, setWindowWidth] = useState(window.innerWidth);
     window.onresize = () => setWindowWidth(window.innerWidth);
 
-    const audio = new Audio()
+    const audio = useRef(null)
     const [ data, setData ] = useState([])
     const [ time, setTime ] = useState(0)
     const [ name, setName ] = useState('')
     const [ wallet, setWallet ] = useState('')
+    const [ loading, setLoading ] = useState('')
     const [ validWallet, setValidWallet ] = useState(localStorage.getItem('wallet') || '')
     
+    const [ soundOn, setSoundOn ] = useState(false)
     const [ update, setUpdate ] = useState(false)
     const [ clicked, setClicked ] = useState(false)
     const [ lastTime, setLastTime ] = useState(parseInt(localStorage.getItem('clvlsTm')) || 0)
@@ -44,6 +47,7 @@ const Mehpop = () => {
         try {
             if (currentPoints > lastPoints && validWallet) {
                 // const greater = currentPoints >= lastPoints
+                // setLoading(true)
                 const updated = currentPoints - lastPoints
                 const response = await axios.patch(endpoint, { wallet: validWallet, point: updated })
                 setLastTime(new Date().getTime())
@@ -61,6 +65,8 @@ const Mehpop = () => {
             }
         } catch (error) {
             if (error) return false;
+        } finally {
+            // setLoading(false)
         }
     }
     
@@ -85,18 +91,20 @@ const Mehpop = () => {
     const pushClick = () => {
         setCurrentPoints(currentPoints + 1);
         setClicked(true)
+        setSoundOn(true)
         
         // const audio = document.getElementById('audio')
         // console.log(audio.currentTime)
         // const audio = new Audio('/assets/ba.mp3');
         // audio.src = '/assets/ba.mp3'
         // audio.load()
-        // audio.play()
+        audio.current.play()
     }
     
     const handleInput = async () => {
         if (wallet.length <= 2) return false;
         try {
+            setLoading(true)
             await axios.post(endpoint, { wallet: wallet, point: 0})
             setValidWallet(wallet)
             setLastTime(new Date().getTime())
@@ -106,10 +114,12 @@ const Mehpop = () => {
             if (error || error.response) {
                 return false;
             }
+        } finally {
+            setLoading(false)
         }
     }
     
-    // window.onbeforeunload = () => { sendPoints() }
+    // window.onbeforeunload = () => { setClicked(false) }
     
     useEffect(() => { update && getData(); setUpdate(false); }, [update])
     useEffect(() => { getData(); sendPoints(); setInterval(() => { setClicked(false) }, 300) }, [])
@@ -120,13 +130,17 @@ const Mehpop = () => {
     // useEffect(() => { localStorage.setItem('clvrsrlibp', points)}, [points])
     // useEffect(() => { localStorage.setItem('clvfxPnt', fixPoints)}, [fixPoints])
 
-    useEffect(() => {
-        if (clicked) { 
-            audio.src = '/assets/ba.mp3'
-            audio.load()
-            audio.play()
-        }
-    }, [clicked])
+    
+    // useEffect(() => {
+    //     // audio.current.src = '/assets/ba.mp3'
+    //     audio.current.load()
+    //     if (soundOn) { 
+    //         // audio.src = '/assets/ba.mp3'
+    //         // audio.load()
+    //         // audio.current.play().then(() => setSoundOn(false))
+    //         // setSoundOn(false)
+    //     }
+    // }, [soundOn])
 
     // useEffect(() => { 
     //     const currentTime = new Date().getTime();
@@ -214,7 +228,7 @@ const Mehpop = () => {
     return (
         <>
         <Sidebar/>
-        <audio style={{display: 'none'}} preload="metadata" id="audio"><source src="/assets/ba.mp3" type="audio/mpeg"/></audio>
+        <audio style={{display: 'none'}} ref={audio} preload="auto" id="audio"><source src="/assets/ba.mp3" type="audio/mpeg"/></audio>
         <div className="page" style={{paddingBottom: '0'}}>
             <div className="var-background">
                 <img className="blur1" src="/assets/Gradient 1.png" alt="blur" />
@@ -224,6 +238,9 @@ const Mehpop = () => {
                 <Navbar/>
                 <div className="meh-content">
                     <div className="meh-user">
+                        {(loading) ? 
+                        <ScaleLoader style={{marginLeft: '10px'}} height={20} color="white"/>
+                        :
                         <form onSubmit={(e) => {e.preventDefault(); handleInput()}} style={{marginLeft: '10px', textAlign: 'left', position: 'relative'}}>
                             <div className="text3" style={{fontSize: '0.8rem', color: '#aaa'}}>{validWallet ? "Your Wallet : " : "Wallet"}</div>
                             {validWallet  && <input className="meh-input-name" type="text" value={validWallet} readOnly/>}
@@ -231,6 +248,7 @@ const Mehpop = () => {
                             {!validWallet && <input ref={inputref} className="meh-input-name" type="text" value={wallet} onChange={(e) => setWallet(e.target.value)} placeholder="Input Wallet"/>}
                             {!validWallet && <img src="/assets/play-circle.png" onClick={() => handleInput()} style={{position: 'absolute', right: '0', bottom: '10px', cursor: 'pointer'}} alt="" />}
                         </form>
+                        }
                         {validWallet ? 
                         // <form onSubmit={(e) => {e.preventDefault(); handleInput()}} style={{marginLeft: '10px', textAlign: 'left', position: 'relative'}}>
                         //     <div className="text3" style={{fontSize: '0.8rem', color: '#aaa'}}>Points :</div>
@@ -255,7 +273,7 @@ const Mehpop = () => {
                         />
                         <div className="button-gradient" onClick={() => pushClick()} style={validWallet ? {width: '120px', height: '45px', zIndex: '10', margin: 'auto', marginTop: '30px'} : { display: 'none' }}>POP MEH!</div>
                     </div>
-                    {lastTime ? <Remaining startTime={lastTime}/> : <></>}
+                    {lastTime != 0 && <Remaining startTime={lastTime}/>}
                     <div onClick={() => windowWidth <= 470 ? handleBoardMobile() : handleBoard()} id="leaderboard" className="leaderboard">
                         <div style={{display: 'flex', justifyContent: 'space-between', gap: '10px', alignItems: 'center'}}>
                             <div style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
