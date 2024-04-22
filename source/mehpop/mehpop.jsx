@@ -49,7 +49,7 @@ const Mehpop = () => {
                 // const greater = currentPoints >= lastPoints
                 // setLoading(true)
                 const updated = currentPoints - lastPoints
-                const response = await axios.patch(endpoint, { wallet: validWallet, point: updated })
+                const response = await axios.patch(endpoint, { wallet: validWallet, point: currentPoints })
                 setLastTime(new Date().getTime())
                 setLastPoints(currentPoints >= lastPoints ? currentPoints : lastPoints)
                 localStorage.setItem('clvlsTm', new Date().getTime())
@@ -133,7 +133,8 @@ const Mehpop = () => {
     
     useEffect(() => {
         if (clicked) { 
-            audio.current.src = '/assets/ba.mp3'
+            audio.current.src = '/assets/bya.mp3'
+            audio.current.currentTime = 0.25
             audio.current.load()
             audio.current.play()
             // setSoundOn(false)
@@ -241,7 +242,7 @@ const Mehpop = () => {
                         :
                         <form onSubmit={(e) => {e.preventDefault(); handleInput()}} style={{marginLeft: '10px', textAlign: 'left', position: 'relative'}}>
                             <div className="text3" style={{fontSize: '0.8rem', color: '#aaa'}}>{validWallet ? "Your Wallet : " : "Wallet"}</div>
-                            {validWallet  && <input className="meh-input-name" type="text" value={validWallet} readOnly/>}
+                            {validWallet  && <input className="meh-input-name" type="text" value={slicedText(validWallet)} readOnly/>}
                             {/* {validWallet && <div className="fa-solid fa-circle-xmark fa-md" style={{translate : '-5px 0'}}></div>} */}
                             {!validWallet && <input ref={inputref} className="meh-input-name" type="text" value={wallet} onChange={(e) => setWallet(e.target.value)} placeholder="Input Wallet"/>}
                             {!validWallet && <img src="/assets/play-circle.png" onClick={() => handleInput()} style={{position: 'absolute', right: '0', bottom: '10px', cursor: 'pointer'}} alt="" />}
