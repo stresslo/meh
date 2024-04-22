@@ -42,7 +42,7 @@ const Mehpop = () => {
 
     const handleSend = async () => {
         try {
-            if (currentPoints && validWallet) {
+            if (currentPoints > lastPoints && validWallet) {
                 // const greater = currentPoints >= lastPoints
                 const updated = currentPoints - lastPoints
                 const response = await axios.patch(endpoint, { wallet: validWallet, point: updated })
@@ -56,6 +56,8 @@ const Mehpop = () => {
                 // localStorage.setItem('clvlsPnt', currentPoints >= lastPoints ? currentPoints : lastPoints)
                 // localStorage.setItem('clvfxPnt', currentPoints >= fixPoints ? currentPoints : fixPoints)
                 // console.log(response)
+            } else {
+                setLastTime(new Date().getTime())
             }
         } catch (error) {
             if (error) return false;
@@ -83,6 +85,8 @@ const Mehpop = () => {
     const pushClick = () => {
         setCurrentPoints(currentPoints + 1);
         setClicked(true)
+        const audio = new Audio('/assets/ba.mp3');
+        audio.play();
     }
     
     const handleInput = async () => {
@@ -259,7 +263,7 @@ const Mehpop = () => {
                                         <div style={{display: 'flex', gap: '15px', alignItems: 'center'}}>
                                             <div className="top-box-circle">{key + 1}</div>
                                             <div className="top-box-user">
-                                                <p>{slicedText(data.id)}</p>
+                                                <p>{slicedText(data.wallet)}</p>
                                                 <p>{data.point}</p>
                                             </div>
                                         </div>
@@ -295,7 +299,7 @@ const Mehpop = () => {
                                 <div style={{display: 'flex', gap: '15px', alignItems: 'center'}}>
                                     <div className="top-box-circle">{key + 1}</div>
                                     <div className="top-box-user">
-                                        <p>{slicedText(data.id)}</p>
+                                        <p>{slicedText(data.wallet)}</p>
                                         <p>{data.point}</p>
                                     </div>
                                 </div>
