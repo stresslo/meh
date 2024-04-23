@@ -38,6 +38,11 @@ const Mehpop = () => {
         try {
             const response = await axios.get(endpoint)
             setData(response.data.users)
+            const index = response.data.users.findIndex((data) => data.wallet == validWallet)
+            if (response.data.users[index].point == 0) {
+                setCurrentPoints(response.data.users[index].point)
+                setLastPoints(response.data.users[index].point)
+            }
         } catch (error) {
             return false;
         }
@@ -49,18 +54,20 @@ const Mehpop = () => {
                 // const greater = currentPoints >= lastPoints
                 // setLoading(true)
                 const updated = currentPoints - lastPoints
+                const realPoint = points ? parseInt(points.split(' ')[1]) + updated : updated
                 const response = await axios.patch(endpoint, { wallet: validWallet, point: currentPoints })
                 setLastTime(new Date().getTime())
                 setLastPoints(currentPoints >= lastPoints ? currentPoints : lastPoints)
-                localStorage.setItem('clvlsTm', new Date().getTime())
+                // setPoints(`clv ${realPoint} ${new Date().getTimezoneOffset().toString().split('').join('')}`)
+                // setCurrentPoints(0)
+                // setLastPoints(0)
                 setUpdate(true)
                 // setFixPoints(currentPoints)
-                // localStorage.setItem('clvrsrlibp', `clv ${greater ? updated : 0} ${new Date().getTimezoneOffset().toString().split('').join('')}`)
-                // setPoints(`clv ${updated} ${new Date().getTimezoneOffset().toString().split('').join('')}`)
                 // localStorage.setItem('clvlsPnt', currentPoints >= lastPoints ? currentPoints : lastPoints)
                 // localStorage.setItem('clvfxPnt', currentPoints >= fixPoints ? currentPoints : fixPoints)
                 // console.log(response)
             } else {
+                getData()
                 validWallet ? setLastTime(new Date().getTime()) : setLastTime(0)
             }
         } catch (error) {
@@ -124,8 +131,10 @@ const Mehpop = () => {
     useEffect(() => { update && getData(); setUpdate(false); }, [update])
     useEffect(() => { getData(); sendPoints(); setInterval(() => { setClicked(false) }, 300) }, [])
 
+    useEffect(() => { localStorage.setItem('clvrsrlibp', points) }, [points])
     useEffect(() => { localStorage.setItem('clvlsPnt', lastPoints) }, [lastPoints])
     useEffect(() => { localStorage.setItem('clvcrnPnt', currentPoints);}, [currentPoints])
+    useEffect(() => { lastTime && localStorage.setItem('clvlsTm', lastTime) }, [lastTime])
 
     // useEffect(() => { localStorage.setItem('clvrsrlibp', points)}, [points])
     // useEffect(() => { localStorage.setItem('clvfxPnt', fixPoints)}, [fixPoints])
@@ -295,7 +304,11 @@ const Mehpop = () => {
                                         <div style={{display: 'flex', gap: '15px', alignItems: 'center'}}>
                                             <div className="top-box-circle">{key + 1}</div>
                                             <div className="top-box-user">
+                                                {(slicedText(data.wallet) == validWallet) ? 
+                                                <p style={{color: 'var(--yellow)'}}>{slicedText(data.wallet)}</p>
+                                                : 
                                                 <p>{slicedText(data.wallet)}</p>
+                                                }
                                                 <p>{data.point}</p>
                                             </div>
                                         </div>
@@ -331,7 +344,11 @@ const Mehpop = () => {
                                 <div style={{display: 'flex', gap: '15px', alignItems: 'center'}}>
                                     <div className="top-box-circle">{key + 1}</div>
                                     <div className="top-box-user">
+                                        {(slicedText(data.wallet) == validWallet) ? 
+                                        <p style={{color: 'var(--yellow)'}}>{slicedText(data.wallet)}</p>
+                                        : 
                                         <p>{slicedText(data.wallet)}</p>
+                                        }
                                         <p>{data.point}</p>
                                     </div>
                                 </div>

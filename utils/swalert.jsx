@@ -1,13 +1,14 @@
 import Swal from "sweetalert2"
 
-const swalert = (msg, icon) => {
-    Swal.fire({
+const swalert = async (msg, icon, timer) => {
+    return Swal.fire({
         title : msg,
         icon  : icon || 'info',
         showConfirmButton : false,
         background : 'var(--primary)',
         customClass: { container: 'swalert' },
-        color: '#eee'
+        color: '#eee',
+        timer : timer || false
     })
 }
 
