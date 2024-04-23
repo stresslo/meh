@@ -95,7 +95,10 @@ const Admin = () => {
                                 showConfirmButton: false,
                                 customClass: { container: 'swalert' },
                                 allowOutsideClick: false
-                            }).then(() => localStorage.setItem('pwd', enteredPassword))
+                            }).then(() => {
+                                localStorage.setItem('pwd', enteredPassword)
+                                getData()
+                            })
                         } else {
                             Swal.fire({
                                 text: 'Invalid password! Please try again.',
