@@ -18,13 +18,12 @@ const Mehpop = () => {
 
     const audio = useRef(new Audio())
     const [ data, setData ] = useState([])
-    const [ time, setTime ] = useState(0)
-    const [ name, setName ] = useState('')
+    // const [ time, setTime ] = useState(0)
+    // const [ name, setName ] = useState('')
     const [ wallet, setWallet ] = useState('')
     const [ loading, setLoading ] = useState('')
     const [ validWallet, setValidWallet ] = useState(localStorage.getItem('wallet') || '')
     
-    const [ soundOn, setSoundOn ] = useState(false)
     const [ update, setUpdate ] = useState(false)
     const [ clicked, setClicked ] = useState(false)
     const [ lastTime, setLastTime ] = useState(parseInt(localStorage.getItem('clvlsTm')) || 0)
@@ -32,7 +31,6 @@ const Mehpop = () => {
     const [ currentPoints, setCurrentPoints ] = useState(parseInt(localStorage.getItem('clvcrnPnt')) || 0)
 
     const [ points, setPoints ] = useState(localStorage.getItem('clvrsrlibp') || 0)
-    const [ fixPoints, setFixPoints] = useState(parseInt(localStorage.getItem('clvfxPnt')) || 0)
 
     const getData = async () => {
         try {
@@ -53,9 +51,9 @@ const Mehpop = () => {
             if (currentPoints > lastPoints && validWallet) {
                 // const greater = currentPoints >= lastPoints
                 // setLoading(true)
-                const updated = currentPoints - lastPoints
-                const realPoint = points ? parseInt(points.split(' ')[1]) + updated : updated
-                const response = await axios.patch(endpoint, { wallet: validWallet, point: currentPoints })
+                // const updated = currentPoints - lastPoints
+                // const realPoint = points ? parseInt(points.split(' ')[1]) + updated : updated
+                await axios.patch(endpoint, { wallet: validWallet, point: currentPoints })
                 setLastTime(new Date().getTime())
                 setLastPoints(currentPoints >= lastPoints ? currentPoints : lastPoints)
                 // setPoints(`clv ${realPoint} ${new Date().getTimezoneOffset().toString().split('').join('')}`)
@@ -98,7 +96,6 @@ const Mehpop = () => {
     const pushClick = () => {
         setCurrentPoints(currentPoints + 1);
         setClicked(true)
-        setSoundOn(true)
         
         // const audio = document.getElementById('audio')
         // console.log(audio.currentTime)
@@ -271,7 +268,7 @@ const Mehpop = () => {
                         }
                     </div>
                     <div style={{textAlign: 'center'}}>
-                        <div className="text1">Your Score {name ? `: ${name}` : ''}</div>
+                        <div className="text1">Your Score</div>
                         <div className="text1" style={{fontSize: '3.5rem', fontWeight: 'bold'}}>{currentPoints}</div>
                         <img 
                             id={clicked ? "open" : "close"} 
