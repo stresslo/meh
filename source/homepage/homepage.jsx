@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../fragments/navbar/navbar"
 import Sidebar from "../fragments/sidebar/sidebar";
 import swalert from "../../utils/swalert";
+import Swap from "../fragments/swap/swap";
 import Chart from "../fragments/chart/chart";
 import "./homepage.css"
 
@@ -14,10 +15,33 @@ const Homepage = () => {
 
     const [boxStyle, setBoxStyle] = useState('box1')
 
+    const showSwap = () => {
+        const path = location.pathname
+        const swap = document.querySelector('.swap')
+        const homepage = document.querySelector('.homepage')
+        const page = document.querySelector('.page')
+        swap.classList.add('show')
+        path == '/' ? homepage.classList.add('blur') : page.classList.add('blur')
+    }
+
     return (
         <>
         <Sidebar/>
+        <Swap/>
         <div className="homepage">
+            <div onClick={() => showSwap()} style={{ textShadow: '3px 3px 15px var(--blue)' ,position: 'fixed', zIndex: 10, bottom: '150px', right : "25px", display: 'flex', flexDirection: 'column', gap: '10px', cursor: 'pointer'}}>
+                <div className="gradient1">
+                    <h3>B</h3>
+                    <h3>U</h3>
+                    <h3>Y</h3>
+                </div>
+                <div className="gradient1">
+                    <h3>$</h3>
+                    <h3>M</h3>
+                    <h3>E</h3>
+                    <h3>H</h3>
+                </div>
+            </div>
             <div className="top-page">
                 <Navbar/>
                 <div className="var-background">

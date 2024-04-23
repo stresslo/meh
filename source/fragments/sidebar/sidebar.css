@@ -1,4 +1,4 @@
-.sidebar {
+.sidebar, .swap {
     width: 100%;
     height: 0;
     position: fixed;
@@ -37,7 +37,7 @@
     z-index: 9;
 }
 
-.sidebar.show {
+.sidebar.show, .swap.show {
     height: 100%;
     padding: 20px 50px;
     opacity: 1;
@@ -48,5 +48,5 @@
 }
 
 @media (max-width : 470px) {
-    .sidebar.show { padding: 20px; }
+    .sidebar.show, .swap.show{ padding: 20px; }
 }
