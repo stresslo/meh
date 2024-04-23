@@ -29,7 +29,7 @@ const Homepage = () => {
         <Sidebar/>
         <Swap/>
         <div className="homepage">
-            <div onClick={() => showSwap()} style={{ textShadow: '3px 3px 15px var(--blue)' ,position: 'fixed', zIndex: 10, bottom: '150px', right : "25px", display: 'flex', flexDirection: 'column', gap: '10px', cursor: 'pointer'}}>
+            <div onClick={() => showSwap()} style={{ textShadow: '3px 3px 15px var(--blue)' ,position: 'fixed', zIndex: 10, bottom: '100px', right : "25px", display: 'flex', flexDirection: 'column', gap: '10px', cursor: 'pointer'}}>
                 <div className="gradient1">
                     <h3>B</h3>
                     <h3>U</h3>
