@@ -46,12 +46,13 @@ const Admin = () => {
             if (res.isConfirmed) {
                 try {
                     setLoading(true)
+                    const data = await axios.get('https://api.mehguy.click/api/v1/users')
+                    socket.emit('sent', data)
                     const endpoint = "https://api.mehguy.click/api/v1/admin"
                     const response = await axios.patch(endpoint)
                     swalert(response.data.message, 'success', 2000)
                     .then(() => {
                         location.reload(); 
-                        socket.emit('sent')
                         localStorage.setItem('clvlsPnt', 0)
                         localStorage.setItem('clvcrnPnt', 0)
                     })
