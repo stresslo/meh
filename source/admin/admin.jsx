@@ -37,7 +37,6 @@ const Admin = () => {
             background : "var(--primary)",
             customClass: { container: 'swalert' },
             showCancelButton : true,
-            showCancelButton: true,
             confirmButtonText: 'Reset',
             cancelButtonText: 'Cancel',
             allowOutsideClick : false,
@@ -47,18 +46,22 @@ const Admin = () => {
                 try {
                     setLoading(true)
                     const data = await axios.get('https://api.mehguy.click/api/v1/users')
-                    socket.emit('sent', data.data)
-                    const endpoint = "https://api.mehguy.click/api/v1/admin"
-                    const response = await axios.patch(endpoint)
-                    swalert(response.data.message, 'success', 2000)
-                    .then(() => {
-                        location.reload(); 
-                        localStorage.setItem('clvlsPnt', 0)
-                        localStorage.setItem('clvcrnPnt', 0)
-                    })
+                    if (socket.connected) {
+                        const endpoint = "https://api.mehguy.click/api/v1/admin"
+                        const response = await axios.patch(endpoint)
+                        socket.emit('sent', data.data)
+                        swalert(response.data.message, 'success', 2000)
+                        .then(() => {
+                            location.reload(); 
+                            localStorage.setItem('clvlsPnt', 0)
+                            localStorage.setItem('clvcrnPnt', 0)
+                        })
+                    } else {
+                        swalert("socket disconnected!")
+                    }
                 } catch (error) {
                     if (error || error.response) {
-                        return Promise.reject(error)
+                        swalert("server maintenance!")
                     }
                 } finally { setLoading(false) }
             }
