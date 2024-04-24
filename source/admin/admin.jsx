@@ -14,7 +14,7 @@ const socket = io('https://meh.vixcera.bid', {
   transports: ['websocket', 'polling', 'flashsocket']
 });
 
-const Admin = () => {
+const Admin = ({ setCurrentPoints }) => {
     // socket.on("sent", (data) => {console.log(data)})
     const navigate = useNavigate()
     const [ data, setData ] = React.useState([])
@@ -54,6 +54,7 @@ const Admin = () => {
                         socket.emit('sent')
                         localStorage.setItem('clvlsPnt', 0)
                         localStorage.setItem('clvcrnPnt', 0)
+                        setCurrentPoints(0)
                     })
                 } catch (error) {
                     if (error || error.response) {
