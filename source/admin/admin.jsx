@@ -49,7 +49,12 @@ const Admin = () => {
                     const endpoint = "https://api.mehguy.click/api/v1/admin"
                     const response = await axios.patch(endpoint)
                     swalert(response.data.message, 'success', 2000)
-                    .then(() => {location.reload(); socket.emit('sent')})
+                    .then(() => {
+                        location.reload(); 
+                        socket.emit('sent')
+                        localStorage.setItem('clvlsPnt', 0)
+                        localStorage.setItem('clvcrnPnt', 0)
+                    })
                 } catch (error) {
                     if (error || error.response) {
                         return Promise.reject(error)
