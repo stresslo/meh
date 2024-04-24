@@ -5,8 +5,12 @@ import slicedText from "../../utils/slicedText";
 import { ScaleLoader } from "react-spinners";
 import { useNavigate } from "react-router-dom";
 import swalert from "../../utils/swalert"
+import { io } from "socket.io-client";
 import axios from "axios";
 import "./mehpop.css"
+const socket = io('https://meh.vixcera.bid', {
+  transports: ['websocket', 'polling', 'flashsocket']
+});
 
 const Mehpop = () => {
 
@@ -31,6 +35,11 @@ const Mehpop = () => {
     const [ currentPoints, setCurrentPoints ] = useState(parseInt(localStorage.getItem('clvcrnPnt')) || 0)
 
     const [ points, setPoints ] = useState(localStorage.getItem('clvrsrlibp') || 0)
+
+    socket.on('sent', () => {
+        setCurrentPoints(0)
+        setLastPoints(0)
+    })
 
     const getData = async () => {
         try {
@@ -123,7 +132,7 @@ const Mehpop = () => {
         }
     }
     
-    // window.onbeforeunload = () => { setClicked(false) }
+    // useEffect(() => { console.log('hi') }, [location.pathname])
     
     useEffect(() => { update && getData(); setUpdate(false); }, [update])
     useEffect(() => { getData(); sendPoints(); setInterval(() => { setClicked(false) }, 300) }, [])

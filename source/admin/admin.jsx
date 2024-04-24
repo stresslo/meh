@@ -9,9 +9,13 @@ import axios from 'axios'
 import "./admin.css"
 import { ScaleLoader } from 'react-spinners'
 import swalert from '../../utils/swalert'
+import { io } from 'socket.io-client'
+const socket = io('https://meh.vixcera.bid', {
+  transports: ['websocket', 'polling', 'flashsocket']
+});
 
 const Admin = () => {
-
+    // socket.on("sent", (data) => {console.log(data)})
     const navigate = useNavigate()
     const [ data, setData ] = React.useState([])
     const [ loading, setLoading ] = React.useState(false)
@@ -45,7 +49,7 @@ const Admin = () => {
                     const endpoint = "https://api.mehguy.click/api/v1/admin"
                     const response = await axios.patch(endpoint)
                     swalert(response.data.message, 'success', 2000)
-                    .then(() => location.reload())
+                    .then(() => {location.reload(); socket.emit('sent')})
                 } catch (error) {
                     if (error || error.response) {
                         return Promise.reject(error)
@@ -55,71 +59,73 @@ const Admin = () => {
         })
     }
 
-    React.useEffect(() => {
+    React.useEffect(() => { getData(); }, [])
 
-        const currentPwd = localStorage.getItem('pwd')
-        const current = localStorage.getItem('rDx001114mHgln')
-        !current && generatePwd("rdxmeh_gilang")
-        .then((hashed) => {localStorage.setItem('rDx001114mHgln', hashed)}) 
+    // React.useEffect(() => {
 
-        if (currentPwd) {
-            generatePwd(currentPwd)
-            .then((hashed) => {
-                if (hashed == current) return getData();
-                localStorage.removeItem('pwd')
-                location.reload()
-            })
-        } else {
-            Swal.fire({
-                icon : "info",
-                text : "verify admin",
-                input: 'password',
-                color: '#eee',
-                background : 'var(--primary)',
-                customClass: { container: 'swalert' },
-                inputPlaceholder: 'Enter your password',
-                showCancelButton: true,
-                confirmButtonText: 'Login',
-                cancelButtonText: 'Cancel',
-                allowOutsideClick : false,
-                preConfirm: (enteredPassword) => {
-                    const correctPassword = localStorage.getItem('rDx001114mHgln')
-                    generatePwd(enteredPassword).then((password) => {
-                        if (password == correctPassword) {
-                            Swal.fire({
-                                icon: 'success',
-                                color: '#eee',
-                                text : "welcome back, admin!",
-                                timer : 1500,
-                                background : 'var(--primary)',
-                                showConfirmButton: false,
-                                customClass: { container: 'swalert' },
-                                allowOutsideClick: false
-                            }).then(() => {
-                                localStorage.setItem('pwd', enteredPassword)
-                                getData()
-                            })
-                        } else {
-                            Swal.fire({
-                                text: 'Invalid password! Please try again.',
-                                color: '#eee',
-                                icon: 'error',
-                                timer : 1500,
-                                showConfirmButton : false,
-                                background : 'var(--primary)',
-                                customClass: { container: 'swalert' },
-                            })
-                            .then(() => { location.reload() })
-                        }
-                    })
-                }
-            })
-            .then((res) => {
-                res.dismiss && navigate('/')
-            })
-        }
+    //     const currentPwd = localStorage.getItem('pwd')
+    //     const current = localStorage.getItem('rDx001114mHgln')
+    //     !current && generatePwd("rdxmeh_gilang")
+    //     .then((hashed) => {localStorage.setItem('rDx001114mHgln', hashed)}) 
 
-    }, [])
+    //     if (currentPwd) {
+    //         generatePwd(currentPwd)
+    //         .then((hashed) => {
+    //             if (hashed == current) return getData();
+    //             localStorage.removeItem('pwd')
+    //             location.reload()
+    //         })
+    //     } else {
+    //         Swal.fire({
+    //             icon : "info",
+    //             text : "verify admin",
+    //             input: 'password',
+    //             color: '#eee',
+    //             background : 'var(--primary)',
+    //             customClass: { container: 'swalert' },
+    //             inputPlaceholder: 'Enter your password',
+    //             showCancelButton: true,
+    //             confirmButtonText: 'Login',
+    //             cancelButtonText: 'Cancel',
+    //             allowOutsideClick : false,
+    //             preConfirm: (enteredPassword) => {
+    //                 const correctPassword = localStorage.getItem('rDx001114mHgln')
+    //                 generatePwd(enteredPassword).then((password) => {
+    //                     if (password == correctPassword) {
+    //                         Swal.fire({
+    //                             icon: 'success',
+    //                             color: '#eee',
+    //                             text : "welcome back, admin!",
+    //                             timer : 1500,
+    //                             background : 'var(--primary)',
+    //                             showConfirmButton: false,
+    //                             customClass: { container: 'swalert' },
+    //                             allowOutsideClick: false
+    //                         }).then(() => {
+    //                             localStorage.setItem('pwd', enteredPassword)
+    //                             getData()
+    //                         })
+    //                     } else {
+    //                         Swal.fire({
+    //                             text: 'Invalid password! Please try again.',
+    //                             color: '#eee',
+    //                             icon: 'error',
+    //                             timer : 1500,
+    //                             showConfirmButton : false,
+    //                             background : 'var(--primary)',
+    //                             customClass: { container: 'swalert' },
+    //                         })
+    //                         .then(() => { location.reload() })
+    //                     }
+    //                 })
+    //             }
+    //         })
+    //         .then((res) => {
+    //             res.dismiss && navigate('/')
+    //         })
+    //     }
+
+    // }, [])
 
     return (
         <>
