@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import Navbar from "../fragments/navbar/navbar"
 import Sidebar from "../fragments/sidebar/sidebar"
 import slicedText from "../../utils/slicedText";
