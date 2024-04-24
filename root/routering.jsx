@@ -7,15 +7,15 @@ import React, { useEffect } from "react";
 
 const Routering = () => {
 
-  const [currentPoints, setCurrentPoints] = React.useState(parseInt(localStorage.getItem('clvcrnPnt')) || 0)
-  useEffect(() => { localStorage.setItem('clvcrnPnt', currentPoints);}, [currentPoints])
+  // const [currentPoints, setCurrentPoints] = React.useState(parseInt(localStorage.getItem('clvcrnPnt')) || 0)
+  // useEffect(() => { localStorage.setItem('clvcrnPnt', currentPoints);}, [currentPoints])
 
   return (
       <Router>
         <Routes>
           <Route path="/" element={<Homepage/>}/>
-          <Route path="/play" element={<Mehpop setCurrentPoints={setCurrentPoints} currentPoints={currentPoints}/>}/>
-          <Route path="/sw4m-sc-gmj/admin" element={<Admin setCurrentPoints={setCurrentPoints}/>}/>
+          <Route path="/play" element={<Mehpop/>}/>
+          <Route path="/sw4m-sc-gmj/admin" element={<Admin/>}/>
         </Routes>
       </Router>
   )

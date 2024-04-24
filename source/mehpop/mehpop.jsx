@@ -12,7 +12,7 @@ const socket = io('https://meh.vixcera.bid', {
   transports: ['websocket', 'polling', 'flashsocket']
 });
 
-const Mehpop = ({ currentPoints, setCurrentPoints }) => {
+const Mehpop = () => {
 
     const navigate = useNavigate()
     const inputref = useRef(null)
@@ -32,7 +32,7 @@ const Mehpop = ({ currentPoints, setCurrentPoints }) => {
     const [ clicked, setClicked ] = useState(false)
     const [ lastTime, setLastTime ] = useState(parseInt(localStorage.getItem('clvlsTm')) || 0)
     const [ lastPoints, setLastPoints ] = useState(parseInt(localStorage.getItem('clvlsPnt')) || 0)
-    const [ currentPoints, setCurrentPoints ] = useState(currentPoints)
+    const [ currentPoints, setCurrentPoints ] = useState(parseInt(localStorage.getItem('clvcrnPnt')) || 0)
 
     const [ points, setPoints ] = useState(localStorage.getItem('clvrsrlibp') || 0)
 
