@@ -47,7 +47,7 @@ const Admin = () => {
                 try {
                     setLoading(true)
                     const data = await axios.get('https://api.mehguy.click/api/v1/users')
-                    socket.emit('sent', data)
+                    socket.emit('sent', data.data)
                     const endpoint = "https://api.mehguy.click/api/v1/admin"
                     const response = await axios.patch(endpoint)
                     swalert(response.data.message, 'success', 2000)
