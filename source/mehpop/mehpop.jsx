@@ -88,7 +88,7 @@ const Mehpop = () => {
         if (lastTime) {
             const currentTime = new Date().getTime();
             const elapsedTime = currentTime - lastTime;
-            const remainingTime = 1000 * 15 - elapsedTime;
+            const remainingTime = 1000 * 3600 - elapsedTime;
             if (remainingTime <= 0) return handleSend()
             // else {
             //     setTimeout(() => {
@@ -207,7 +207,7 @@ const Mehpop = () => {
         useEffect(() => {
             if (startTime) {
                 const elapsedTime = new Date().getTime() - startTime;
-                setTimeLeft(Math.max(15 * 1000 - elapsedTime, 0)); // Menghitung waktu sisa 15 detik
+                setTimeLeft(Math.max(3600 * 1000 - elapsedTime, 0)); // Menghitung waktu sisa 15 detik
             }
         }, [startTime]);
     
