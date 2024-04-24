@@ -329,6 +329,14 @@ const Mehpop = () => {
                                 }))}
                             </div>
                     </div>
+                    <div style={{marginTop: '20px', width: '100%', display: 'flex', flexDirection: 'column', gap: '20px', alignItems: 'center', fontFamily: 'var(--dmsans)'}}>
+                        <h2>Availabe Reward</h2>
+                        <div style={{width: '100%', overflow: 'scroll hidden'}}>
+                            <div style={{display: 'flex', gap: '20px', alignItems: 'center', margin: 'auto', width: 'max-content'}}>
+                                <img style={{width: '70px', borderRadius: '50%'}} src="https://ociswap.com/cdn-cgi/image/width=180,format=auto/https://i.ibb.co/vL5qt1S/image.png" alt="" />
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
